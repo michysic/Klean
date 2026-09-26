@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Klean | Limpieza para tus dispositivos</title>
+<meta name="description" content="Kits de limpieza para audífonos, celular, teclado y pantalla. Pide el tuyo por Instagram.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#121C22; --teal:#00B7C3; --aqua:#95E4E9; --mist:#E3F8F9; --white:#FFFFFF; --marfil:#F8F4E8;
+    --bg:var(--white); --bg-alt:var(--mist); --bg-warm:var(--marfil);
+    --text:var(--navy); --muted:#44535C; --line:#CFEFF1; --card:var(--white);
+    --teal-ink:#007C85;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#121C22; --bg-alt:#18262E; --bg-warm:#1C2A31;
+      --text:#F2FBFC; --muted:#A9C3C8; --line:#24404A; --card:#18262E; --teal-ink:#5FD9E1;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#121C22; --bg-alt:#18262E; --bg-warm:#1C2A31;
+    --text:#F2FBFC; --muted:#A9C3C8; --line:#24404A; --card:#18262E; --teal-ink:#5FD9E1;
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px))}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Carlito","Calibri","Segoe UI",system-ui,sans-serif;font-size:1.125rem;line-height:1.55;-webkit-font-smoothing:antialiased}
+  img,svg{max-width:100%;display:block}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;border-radius:6px}
+  .wrap{width:min(1120px,100% - 2.5rem);margin-inline:auto}
+
+  /* Header */
+  header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:68px}
+  .logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-weight:700;font-size:1.6rem;letter-spacing:-.02em}
+  .logo-mark{width:34px;height:34px;border-radius:10px;background:var(--teal);display:grid;place-items:center;color:var(--white);font-size:1.25rem}
+  nav ul{display:flex;gap:1.6rem;list-style:none;margin:0;padding:0}
+  nav a{text-decoration:none;color:var(--muted);font-size:1rem}
+  nav a:hover{color:var(--text)}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.35rem;border-radius:999px;font-weight:700;font-size:1rem;text-decoration:none;border:2px solid transparent;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
+  .btn-primary{background:var(--teal);color:var(--navy)}
+  .btn-primary:hover{background:var(--aqua)}
+  .btn-ghost{border-color:var(--text);color:var(--text);background:transparent}
+  .btn-ghost:hover{background:var(--text);color:var(--bg)}
+  .btn-sm{padding:.55rem 1rem;font-size:.95rem}
+  @media (max-width:760px){nav{display:none}}
+
+  /* Hero */
+  .hero{padding:4.5rem 0 5rem;background:linear-gradient(180deg,var(--bg-alt),var(--bg))}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center}
+  .hero h1{font-size:clamp(2.6rem,6vw,4.4rem);line-height:1.02;letter-spacing:-.03em;margin:0 0 1.25rem;font-weight:700;max-width:12ch}
+  .hero p.lead{font-size:1.3rem;color:var(--muted);max-width:40ch;margin:0 0 2rem}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:.8rem}
+  .facts{display:flex;gap:2rem;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--muted);font-size:1rem;flex-wrap:wrap}
+  .facts strong{display:block;color:var(--text);font-size:1.35rem}
+  @media (max-width:860px){.hero-grid{grid-template-columns:1fr;gap:2.5rem}.hero{padding:3rem 0 3.5rem}}
+
+  /* Scratch-to-clean */
+  .clean-card{position:relative;background:var(--card);border-radius:28px;padding:1.25rem;border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(0,124,133,.45)}
+  .stage{position:relative;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:radial-gradient(circle at 50% 42%,var(--mist),var(--aqua) 120%);touch-action:none}
+  .stage svg.device{position:absolute;inset:0;width:100%;height:100%}
+  .stage canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab}
+  .stage.clean canvas{opacity:0;transition:opacity .6s ease}
+  .sparkle{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .5s}
+  .stage.clean .sparkle{opacity:1}
+  .clean-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem .4rem .2rem}
+  .clean-foot p{margin:0;font-size:1rem;color:var(--muted)}
+  .meter{height:8px;border-radius:99px;background:var(--mist);overflow:hidden;margin:.2rem .4rem 0}
+  .meter span{display:block;height:100%;width:0;background:var(--teal);transition:width .2s}
+  .link-btn{background:none;border:0;padding:0;font:inherit;font-size:1rem;font-weight:700;color:var(--teal-ink);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+  /* Sections */
+  section{padding:5rem 0}
+  h2{font-size:clamp(2rem,4vw,2.9rem);letter-spacing:-.025em;line-height:1.08;margin:0 0 .75rem}
+  .section-intro{color:var(--muted);max-width:52ch;margin:0 0 3rem;font-size:1.2rem}
+
+  /* Products */
+  .products{display:grid;gap:1.5rem}
+  .product{display:grid;grid-template-columns:260px 1fr auto;gap:2rem;align-items:center;padding:1.5rem;border-radius:24px;background:var(--card);border:1px solid var(--line)}
+  .product.featured{border:2px solid var(--teal);background:linear-gradient(90deg,var(--bg-alt),var(--card) 60%)}
+  .p-img{aspect-ratio:4/3;border-radius:18px;background:var(--mist);display:grid;place-items:center;padding:1rem}
+  .p-img svg{width:78%;height:auto}
+  .p-body h3{font-size:1.75rem;margin:0 0 .35rem;letter-spacing:-.015em}
+  .p-body p{margin:0 0 .9rem;color:var(--muted);max-width:52ch}
+  .tag{display:inline-block;font-size:.9rem;font-weight:700;background:var(--teal);color:var(--navy);padding:.2rem .7rem;border-radius:99px;margin-bottom:.6rem}
+  .includes{display:flex;flex-wrap:wrap;gap:.45rem;list-style:none;margin:0;padding:0}
+  .includes li{font-size:.95rem;padding:.25rem .7rem;border-radius:99px;border:1px solid var(--line);color:var(--text)}
+  .p-buy{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:.6rem;min-width:170px}
+  .price{font-size:2.2rem;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .stock{font-size:.95rem;color:var(--teal-ink);display:flex;align-items:center;gap:.4rem}
+  .stock::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal)}
+  @media (max-width:900px){
+    .product{grid-template-columns:1fr;gap:1.25rem}
+    .p-buy{text-align:left;align-items:flex-start;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  }
+
+  /* How to buy */
+  .how{background:var(--navy);color:#F2FBFC}
+  .how .section-intro{color:#A9C3C8}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;list-style:none;margin:0;padding:0;counter-reset:s}
+  .steps li{counter-increment:s;padding:1.5rem 1.5rem 0 0;border-top:2px solid #24404A;position:relative}
+  .steps li::before{content:counter(s);display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--teal);color:var(--navy);font-weight:700;font-size:1.25rem;margin-top:-2.9rem;margin-bottom:1rem}
+  .steps h3{margin:0 0 .35rem;font-size:1.25rem}
+  .steps p{margin:0;color:#A9C3C8;font-size:1.05rem}
+  .steps a{color:var(--aqua)}
+  @media (max-width:860px){.steps{grid-template-columns:1fr 1fr;row-gap:3rem}}
+  @media (max-width:520px){.steps{grid-template-columns:1fr}}
+
+  /* Why */
+  .why{background:var(--bg-warm)}
+  .why-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:3rem;align-items:start}
+  .reasons{display:grid;gap:1.75rem}
+  .reason{display:grid;grid-template-columns:52px 1fr;gap:1rem}
+  .reason .ic{width:52px;height:52px;border-radius:16px;background:var(--teal);display:grid;place-items:center}
+  .reason .ic svg{width:26px;height:26px}
+  .reason h3{margin:.2rem 0 .25rem;font-size:1.3rem}
+  .reason p{margin:0;color:var(--muted)}
+  @media (max-width:860px){.why-grid{grid-template-columns:1fr}}
+
+  /* CTA + footer */
+  .cta{text-align:center;padding:5.5rem 0}
+  .cta h2{max-width:18ch;margin-inline:auto}
+  .cta p{color:var(--muted);margin:0 auto 2rem;max-width:44ch;font-size:1.2rem}
+  footer{background:var(--navy);color:#A9C3C8;padding:3rem 0 2.5rem;font-size:1rem}
+  .foot{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;align-items:flex-start}
+  footer .logo{color:#F2FBFC}
+  footer p{margin:.75rem 0 0;max-width:38ch}
+  footer a{color:var(--aqua)}
+  .legal{margin-top:2rem;padding-top:1.25rem;border-top:1px solid #24404A;font-size:.9rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#inicio" aria-label="Klean, inicio"><span class="logo-mark" aria-hidden="true">K</span>Klean</a>
+    <nav aria-label="Principal">
+      <ul>
+        <li><a href="#productos">Productos</a></li>
+        <li><a href="#como-comprar">Cómo comprar</a></li>
+        <li><a href="#por-que">Por qué Klean</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-primary btn-sm" data-ig href="#">Comprar por Instagram</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Tus audífonos piden una limpieza.</h1>
+        <p class="lead">Kits para limpiar audífonos, celular, teclado y pantalla. Caben en tu mochila y se usan en un minuto, entre clase y clase.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#productos">Ver productos</a>
+          <a class="btn btn-ghost" href="#como-comprar">Cómo comprar</a>
+        </div>
+        <div class="facts">
+          <div><strong>3 kits</strong>desde $3.990</div>
+          <div><strong>Entrega</strong>en tu campus</div>
+          <div><strong>Pedidos</strong>por Instagram</div>
+        </div>
+      </div>
+
+      <div class="clean-card">
+        <div class="stage" id="stage">
+          <svg class="device" viewBox="0 0 400 400" aria-hidden="true">
+            <!-- estuche de audífonos -->
+            <ellipse cx="200" cy="318" rx="118" ry="14" fill="#121C22" opacity=".12"/>
+            <rect x="92" y="150" width="216" height="160" rx="70" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+            <path d="M92 214 H308" stroke="#121C22" stroke-width="3"/>
+            <circle cx="200" cy="248" r="5" fill="#00B7C3"/>
+            <!-- audífonos -->
+            <g>
+              <path d="M150 170 c-22 -8 -30 -42 -12 -62 c16 -18 44 -12 50 8 c6 22 -8 58 -38 54z" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+              <rect x="146" y="164" width="16" height="44" rx="8" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+              <circle cx="166" cy="124" r="11" fill="#95E4E9" stroke="#121C22" stroke-width="3"/>
+            </g>
+            <g>
+              <path d="M250 170 c22 -8 30 -42 12 -62 c-16 -18 -44 -12 -50 8 c-6 22 8 58 38 54z" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+              <rect x="238" y="164" width="16" height="44" rx="8" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+              <circle cx="234" cy="124" r="11" fill="#95E4E9" stroke="#121C22" stroke-width="3"/>
+            </g>
+          </svg>
+          <svg class="sparkle" viewBox="0 0 400 400" aria-hidden="true">
+            <g fill="#00B7C3">
+              <path d="M78 96 l6 16 16 6 -16 6 -6 16 -6 -16 -16 -6 16 -6z"/>
+              <path d="M320 70 l4 11 11 4 -11 4 -4 11 -4 -11 -11 -4 11 -4z"/>
+              <path d="M332 240 l5 13 13 5 -13 5 -5 13 -5 -13 -13 -5 13 -5z"/>
+            </g>
+          </svg>
+          <canvas id="grime" aria-hidden="true"></canvas>
+        </div>
+        <div class="meter" aria-hidden="true"><span id="meterBar"></span></div>
+        <div class="clean-foot">
+          <p id="cleanMsg" aria-live="polite">Pasa el dedo o el mouse para limpiarlos.</p>
+          <button class="link-btn" id="cleanBtn" type="button">Limpiar todo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section id="productos">
+    <div class="wrap">
+      <h2>Nuestros kits</h2>
+      <p class="section-intro">Tres formatos según lo que necesites limpiar. Todos se piden por Instagram y se entregan en tu campus.</p>
+
+      <div class="products">
+        <article class="product featured">
+          <div class="p-img">
+            <svg viewBox="0 0 240 180" aria-hidden="true">
+              <rect x="30" y="58" width="44" height="96" rx="12" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+              <rect x="40" y="38" width="24" height="22" rx="4" fill="#00B7C3" stroke="#121C22" stroke-width="3"/>
+              <path d="M64 44 h16" stroke="#121C22" stroke-width="3" stroke-linecap="round"/>
+              <rect x="38" y="88" width="28" height="30" rx="4" fill="#95E4E9"/>
+              <rect x="92" y="96" width="78" height="58" rx="8" fill="#95E4E9" stroke="#121C22" stroke-width="3"/>
+              <path d="M92 116 h78 M92 134 h78" stroke="#121C22" stroke-width="2" opacity=".35"/>
+              <path d="M186 60 l14 90" stroke="#121C22" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="186" cy="58" r="5" fill="#00B7C3" stroke="#121C22" stroke-width="2"/>
+              <rect x="104" y="58" width="18" height="12" rx="4" fill="#00B7C3" stroke="#121C22" stroke-width="2.5"/>
+              <rect x="132" y="58" width="18" height="12" rx="4" fill="#FFFFFF" stroke="#121C22" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="p-body">
+            <span class="tag">El más pedido</span>
+            <h3>Klean Basic</h3>
+            <p>Lo esencial para tu día a día: limpia pantallas y audífonos, y protege los puertos de tu celular del polvo.</p>
+            <ul class="includes">
+              <li>Mini spray</li><li>Paños de microfibra</li><li>Pick de limpieza</li><li>Tapones USB-C y Lightning</li>
+            </ul>
+          </div>
+          <div class="p-buy">
+            <span class="price">$3.990</span>
+            <span class="stock">En stock</span>
+            <a class="btn btn-primary btn-sm" data-ig data-product="Klean Basic" href="#">Pedir por Instagram</a>
+          </div>
+        </article>
+
+        <article class="product">
+          <div class="p-img">
+            <svg viewBox="0 0 240 180" aria-hidden="true">
+              <rect x="40" y="76" width="160" height="30" rx="15" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+              <path d="M80 76 v30 M120 76 v30 M160 76 v30" stroke="#121C22" stroke-width="2.5"/>
+              <rect x="44" y="80" width="32" height="22" rx="11" fill="#00B7C3"/>
+              <rect x="124" y="80" width="32" height="22" rx="4" fill="#95E4E9"/>
+              <path d="M200 84 l18 -8 v30 l-18 -8z" fill="#95E4E9" stroke="#121C22" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M40 91 h-14" stroke="#121C22" stroke-width="3" stroke-linecap="round"/>
+              <path d="M22 84 v14 M16 86 v10" stroke="#121C22" stroke-width="2.5" stroke-linecap="round"/>
+              <rect x="70" y="122" width="100" height="26" rx="6" fill="#E3F8F9" stroke="#121C22" stroke-width="2.5"/>
+              <path d="M82 135 h76" stroke="#00B7C3" stroke-width="3" stroke-dasharray="6 6"/>
+            </svg>
+          </div>
+          <div class="p-body">
+            <h3>Kit Limpiador 7 en 1</h3>
+            <p>Siete herramientas en un solo formato compacto para limpiar pantalla, teclado y audífonos sin cambiar de kit.</p>
+            <ul class="includes">
+              <li>Pantallas</li><li>Teclados</li><li>Audífonos</li><li>Formato compacto</li>
+            </ul>
+          </div>
+          <div class="p-buy">
+            <span class="price">$5.990</span>
+            <span class="stock">En stock</span>
+            <a class="btn btn-primary btn-sm" data-ig data-product="Kit Limpiador 7 en 1" href="#">Pedir por Instagram</a>
+          </div>
+        </article>
+
+        <article class="product">
+          <div class="p-img">
+            <svg viewBox="0 0 240 180" aria-hidden="true">
+              <g transform="rotate(-28 120 90)">
+                <rect x="46" y="78" width="140" height="24" rx="12" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
+                <rect x="150" y="78" width="36" height="24" rx="12" fill="#00B7C3" stroke="#121C22" stroke-width="3"/>
+                <path d="M46 90 h-22" stroke="#121C22" stroke-width="4" stroke-linecap="round"/>
+                <path d="M186 84 h18 M186 90 h22 M186 96 h18" stroke="#121C22" stroke-width="2.5" stroke-linecap="round"/>
+                <rect x="84" y="84" width="40" height="12" rx="6" fill="#95E4E9"/>
+              </g>
+            </svg>
+          </div>
+          <div class="p-body">
+            <h3>Lápiz Limpiador</h3>
+            <p>Pensado para audífonos inalámbricos: llega a las rejillas y al estuche, donde se acumula la suciedad que no se ve.</p>
+            <ul class="includes">
+              <li>Punta de precisión</li><li>Cepillo suave</li><li>Tamaño de bolsillo</li>
+            </ul>
+          </div>
+          <div class="p-buy">
+            <span class="price">$4.990</span>
+            <span class="stock">En stock</span>
+            <a class="btn btn-primary btn-sm" data-ig data-product="Lápiz Limpiador" href="#">Pedir por Instagram</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO COMPRAR -->
+  <section class="how" id="como-comprar">
+    <div class="wrap">
+      <h2>Cómo comprar</h2>
+      <p class="section-intro">Sin carrito ni registro: todo se coordina por mensaje directo.</p>
+      <ol class="steps">
+        <li><h3>Elige tu kit</h3><p>Revisa los tres formatos y quédate con el que más te sirva.</p></li>
+        <li><h3>Escríbenos</h3><p>Mándanos un mensaje a <a data-ig data-ig-text href="#">@klean.usm</a> con el kit que quieres.</p></li>
+        <li><h3>Coordina la entrega</h3><p>Acordamos el pago y el punto de entrega en tu campus.</p></li>
+        <li><h3>Limpia en un minuto</h3><p>Llévalo en la mochila y úsalo cuando lo necesites.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- POR QUÉ -->
+  <section class="why" id="por-que">
+    <div class="wrap why-grid">
+      <div>
+        <h2>Lo que usas todos los días también se ensucia</h2>
+        <p class="section-intro" style="margin-bottom:0">El celular, los audífonos y el teclado pasan por tus manos cientos de veces al día. Klean hace que limpiarlos sea rápido y fácil de llevar.</p>
+      </div>
+      <div class="reasons">
+        <div class="reason">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#121C22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="2" y="14" width="5" height="7" rx="2"/><rect x="17" y="14" width="5" height="7" rx="2"/></svg></div>
+          <div><h3>Mejor sonido</h3><p>Las rejillas limpias dejan pasar el audio como corresponde.</p></div>
+        </div>
+        <div class="reason">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#121C22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v12H4z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></div>
+          <div><h3>Cabe en la mochila</h3><p>Formatos compactos para tenerlos siempre a mano.</p></div>
+        </div>
+        <div class="reason">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#121C22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v8H4v-8"/><path d="M2 7h20v5H2z"/><path d="M12 20V7"/><path d="M12 7H8a2 2 0 1 1 2-3l2 3 2-3a2 2 0 1 1 2 3h-4"/></svg></div>
+          <div><h3>Buen regalo</h3><p>Un detalle útil para quien vive con los audífonos puestos.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="wrap">
+      <h2>¿Hace cuánto no limpias tus audífonos?</h2>
+      <p>Escríbenos y te ayudamos a elegir el kit que más te acomoda.</p>
+      <a class="btn btn-primary" data-ig href="#">Escribir por Instagram</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="logo" href="#inicio"><span class="logo-mark" aria-hidden="true">K</span>Klean</a>
+        <p>Kits de limpieza para tus dispositivos, pensados para el día a día de estudiantes.</p>
+      </div>
+      <div>
+        <p style="margin-top:.4rem">Pedidos y consultas<br><a data-ig data-ig-text href="#">@klean.usm</a></p>
+      </div>
+    </div>
+    <div class="legal">© 2026 Klean. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script>
+  /* ====== CONFIGURA AQUÍ TU INSTAGRAM ====== */
+  const IG_HANDLE = "klean.usm"; // sin @, ej: "klean.cl"
+  /* ========================================= */
+
+  document.querySelectorAll("[data-ig]").forEach(a => {
+    a.href = "https://www.instagram.com/" + IG_HANDLE;
+    a.target = "_blank"; a.rel = "noopener";
+    if (a.hasAttribute("data-ig-text")) a.textContent = "@" + IG_HANDLE;
+  });
+
+  // Limpia-audífonos interactivo
+  (function(){
+    const stage = document.getElementById("stage");
+    const cv = document.getElementById("grime");
+    const ctx = cv.getContext("2d");
+    const bar = document.getElementById("meterBar");
+    const msg = document.getElementById("cleanMsg");
+    const btn = document.getElementById("cleanBtn");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let done = false, drawing = false, last = null, W, H, dpr;
+
+    function paintGrime(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const r = stage.getBoundingClientRect();
+      W = r.width; H = r.height;
+      cv.width = W * dpr; cv.height = H * dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "rgba(110,98,78,0.28)";
+      ctx.fillRect(0,0,W,H);
+      // manchas y polvo, más concentradas sobre el estuche
+      let seed = 7;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < 420; i++){
+        const x = W*(0.18 + rnd()*0.64), y = H*(0.2 + rnd()*0.62);
+        const s = 1 + rnd()*7;
+        ctx.fillStyle = `rgba(${80+rnd()*40|0},${70+rnd()*30|0},${55+rnd()*20|0},${0.25+rnd()*0.45})`;
+        ctx.beginPath(); ctx.arc(x,y,s,0,Math.PI*2); ctx.fill();
+      }
+      for (let i = 0; i < 14; i++){
+        const x = W*(0.25 + rnd()*0.5), y = H*(0.3 + rnd()*0.45);
+        const g = ctx.createRadialGradient(x,y,0,x,y,W*0.09);
+        g.addColorStop(0,"rgba(120,104,80,0.45)"); g.addColorStop(1,"rgba(120,104,80,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,W*0.09,0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalCompositeOperation = "destination-out";
+    }
+
+    function pos(e){ const r = cv.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; }
+    function wipe(p){
+      ctx.lineWidth = W*0.12; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.beginPath();
+      if (last){ ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); } else { ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+0.1,p.y); }
+      ctx.stroke(); last = p;
+    }
+    let checkT = 0;
+    function progress(){
+      const now = performance.now(); if (now - checkT < 120) return; checkT = now;
+      const data = ctx.getImageData(0,0,cv.width,cv.height).data;
+      let clear = 0, total = 0;
+      for (let i = 3; i < data.length; i += 4*32){ total++; if (data[i] < 20) clear++; }
+      const pct = clear/total;
+      bar.style.width = Math.min(100, Math.round(pct/0.6*100)) + "%";
+      if (pct > 0.6) finish();
+    }
+    function finish(){
+      if (done) return; done = true;
+      bar.style.width = "100%";
+      stage.classList.add("clean");
+      msg.textContent = "Así quedan con Klean.";
+      btn.textContent = "Ensuciar de nuevo";
+    }
+    function reset(){
+      done = false; stage.classList.remove("clean"); bar.style.width = "0";
+      msg.textContent = "Pasa el dedo o el mouse para limpiarlos.";
+      btn.textContent = "Limpiar todo"; paintGrime();
+    }
+
+    cv.addEventListener("pointerdown", e => { if (done) return; drawing = true; last = null; cv.setPointerCapture(e.pointerId); wipe(pos(e)); progress(); });
+    cv.addEventListener("pointermove", e => { if (!drawing || done) return; wipe(pos(e)); progress(); });
+    ["pointerup","pointercancel","pointerleave"].forEach(ev => cv.addEventListener(ev, () => { drawing = false; last = null; }));
+
+    btn.addEventListener("click", () => {
+      if (done){ reset(); return; }
+      if (reduce){ finish(); return; }
+      // barrido automático en zigzag
+      let t = 0; last = null;
+      const rows = 7;
+      (function step(){
+        t += 0.045;
+        const row = Math.floor(t), f = t - row;
+        if (row >= rows){ finish(); return; }
+        const x = (row % 2 === 0 ? f : 1 - f) * W;
+        const y = (row + 0.5) / rows * H;
+        wipe({x,y}); bar.style.width = Math.round(t/rows*100) + "%";
+        requestAnimationFrame(step);
+      })();
+    });
+
+    let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (!done) paintGrime(); }, 150); });
+    paintGrime();
+  })();
+</script>
+</body>
+</html>
