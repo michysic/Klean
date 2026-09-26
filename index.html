@@ -89,7 +89,7 @@
   .p-img{aspect-ratio:4/3;border-radius:18px;background:var(--mist);display:grid;place-items:center;padding:1rem}
   .p-img svg{width:78%;height:auto}
   .p-img.photo{padding:0;overflow:hidden;position:relative}
-  .p-img.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 78%}
+  .p-img.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% var(--focus,50%)}
   .p-body h3{font-size:1.75rem;margin:0 0 .35rem;letter-spacing:-.015em}
   .p-body p{margin:0 0 .9rem;color:var(--muted);max-width:52ch}
   .tag{display:inline-block;font-size:.9rem;font-weight:700;background:var(--teal);color:var(--navy);padding:.2rem .7rem;border-radius:99px;margin-bottom:.6rem}
@@ -220,7 +220,7 @@
       <div class="products">
         <article class="product featured">
           <div class="p-img photo">
-            <img src="klean-basic.jpg" width="1100" height="1100" loading="lazy" decoding="async"
+            <img src="klean-basic.jpg" style="--focus:78%" width="1100" height="1100" loading="lazy" decoding="async"
                  alt="Kit Klean Basic sobre un escritorio: mini spray, paños de microfibra, pick de limpieza y tapones para puertos USB-C y Lightning.">
           </div>
           <div class="p-body">
@@ -238,18 +238,9 @@
         </article>
 
         <article class="product">
-          <div class="p-img">
-            <svg viewBox="20 28 192 136" aria-hidden="true">
-              <rect x="40" y="76" width="160" height="30" rx="15" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
-              <path d="M80 76 v30 M120 76 v30 M160 76 v30" stroke="#121C22" stroke-width="2.5"/>
-              <rect x="44" y="80" width="32" height="22" rx="11" fill="#00B7C3"/>
-              <rect x="124" y="80" width="32" height="22" rx="4" fill="#95E4E9"/>
-              <path d="M200 84 l18 -8 v30 l-18 -8z" fill="#95E4E9" stroke="#121C22" stroke-width="3" stroke-linejoin="round"/>
-              <path d="M40 91 h-14" stroke="#121C22" stroke-width="3" stroke-linecap="round"/>
-              <path d="M22 84 v14 M16 86 v10" stroke="#121C22" stroke-width="2.5" stroke-linecap="round"/>
-              <rect x="70" y="122" width="100" height="26" rx="6" fill="#E3F8F9" stroke="#121C22" stroke-width="2.5"/>
-              <path d="M82 135 h76" stroke="#00B7C3" stroke-width="3" stroke-dasharray="6 6"/>
-            </svg>
+          <div class="p-img photo">
+            <img src="klean-7en1.jpg" width="1100" height="1100" loading="lazy" decoding="async"
+                 alt="Kit Limpiador 7 en 1 abierto sobre un escritorio, con sus cepillos, pinza y paño de microfibra, junto a un celular y audífonos.">
           </div>
           <div class="p-body">
             <h3>Kit Limpiador 7 en 1</h3>
@@ -266,16 +257,9 @@
         </article>
 
         <article class="product">
-          <div class="p-img">
-            <svg viewBox="0 0 240 180" aria-hidden="true">
-              <g transform="rotate(-28 120 90)">
-                <rect x="46" y="78" width="140" height="24" rx="12" fill="#FFFFFF" stroke="#121C22" stroke-width="3"/>
-                <rect x="150" y="78" width="36" height="24" rx="12" fill="#00B7C3" stroke="#121C22" stroke-width="3"/>
-                <path d="M46 90 h-22" stroke="#121C22" stroke-width="4" stroke-linecap="round"/>
-                <path d="M186 84 h18 M186 90 h22 M186 96 h18" stroke="#121C22" stroke-width="2.5" stroke-linecap="round"/>
-                <rect x="84" y="84" width="40" height="12" rx="6" fill="#95E4E9"/>
-              </g>
-            </svg>
+          <div class="p-img photo">
+            <img src="klean-lapiz.jpg" width="1100" height="1100" loading="lazy" decoding="async"
+                 alt="Lápiz Limpiador pasando su punta de microfibra por un audífono inalámbrico, junto a su estuche de carga.">
           </div>
           <div class="p-body">
             <h3>Lápiz Limpiador</h3>
