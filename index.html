@@ -182,6 +182,14 @@
   .pago .btn-ghost{border-color:#F2FBFC;color:#F2FBFC}
   .pago .btn-ghost:hover{background:#F2FBFC;color:var(--navy)}
   .copy-ok{font-size:.95rem;color:var(--aqua)}
+  .pago-resumen{background:#121C22;border:1px solid #24404A;border-radius:16px;padding:1.1rem 1.25rem;display:grid;gap:.6rem}
+  .pago-resumen h4{margin:0;font-size:1.05rem;color:#A9C3C8;font-weight:400}
+  .pago-resumen ul{list-style:none;margin:0;padding:0;display:grid;gap:.3rem}
+  .pago-resumen li{display:flex;justify-content:space-between;gap:1rem;font-size:1.05rem}
+  .pago-monto{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:.3rem 0 0;padding-top:.7rem;border-top:1px solid #24404A}
+  .pago-monto strong{font-size:1.8rem;letter-spacing:-.02em;color:var(--aqua)}
+  .pago-nota{margin:0;color:#A9C3C8;font-size:.98rem}
+  .pago-envio{margin:.25rem 0 0;color:#A9C3C8;font-size:1.02rem}
   @media (max-width:520px){.pago dl{grid-template-columns:1fr;gap:.15rem}.pago dd{margin-bottom:.6rem}}
 </style>
 </head>
@@ -221,7 +229,7 @@
         <div class="facts">
           <div><strong>3 kits</strong>desde $3.990</div>
           <div><strong>Entrega</strong>en tu campus</div>
-          <div><strong>Pedidos</strong>por Instagram</div>
+          <div><strong>Pago</strong>transferencia o efectivo</div>
         </div>
       </div>
 
@@ -338,21 +346,31 @@
       <p class="section-intro">Sin registro ni pagos en línea: armas tu pedido acá y lo cerramos por mensaje directo.</p>
       <ol class="steps">
         <li><h3>Arma tu pedido</h3><p>Agrega los kits que quieras con el botón “Agregar al pedido”.</p></li>
-        <li><h3>Envíanoslo</h3><p>Con un botón copiamos tu pedido y abrimos el chat de <a data-ig data-ig-text href="#">@klean.usm</a>: solo lo pegas.</p></li>
-        <li><h3>Paga y coordina</h3><p>Por transferencia o en efectivo, y acordamos el punto de entrega en tu campus.</p></li>
+        <li><h3>Transfiere el total</h3><p>En “Datos para transferir” copias la cuenta y el monto exacto de tu pedido.</p></li>
+        <li><h3>Manda el comprobante</h3><p>Nos lo envías a <a data-ig data-ig-text href="#">@klean.usm</a> y coordinamos la entrega en tu campus.</p></li>
         <li><h3>Limpia en un minuto</h3><p>Llévalo en la mochila y úsalo cuando lo necesites.</p></li>
       </ol>
 
       <div class="pago" id="pago" hidden>
-        <h3>Pago por transferencia</h3>
-        <p class="pago-intro">Transfiere el total de tu pedido y mándanos el comprobante por mensaje directo. También puedes pagar en efectivo al momento de la entrega.</p>
-        <dl>
-          <div hidden></div>
-        </dl>
+        <h3>Datos para transferir</h3>
+        <p class="pago-intro">Transfiere el total de tu pedido a esta cuenta. También puedes pagar en efectivo al momento de la entrega.</p>
+
+        <div class="pago-resumen" id="pagoResumen" hidden>
+          <h4>Tu pedido</h4>
+          <ul id="pagoLista"></ul>
+          <p class="pago-monto">Total a transferir <strong id="pagoTotal">$0</strong></p>
+        </div>
+
+        <dl></dl>
+        <p class="pago-nota" id="pagoNota" hidden></p>
+
         <div class="pago-actions">
           <button class="btn btn-ghost btn-sm" id="copiarDatos" type="button">Copiar datos</button>
+          <button class="btn btn-ghost btn-sm" id="copiarMonto" type="button" hidden>Copiar monto</button>
           <span class="copy-ok" id="copiarOk" role="status"></span>
         </div>
+
+        <p class="pago-envio">Cuando transfieras, mándanos el comprobante por mensaje directo a <a data-ig data-ig-text href="#">@klean.usm</a> y coordinamos la entrega.</p>
       </div>
     </div>
   </section>
@@ -400,9 +418,9 @@
   <ul class="cart-items" id="cartItems"></ul>
   <div class="cart-foot">
     <div class="cart-total"><span>Total</span><strong id="cartTotal">$0</strong></div>
-    <button class="btn btn-primary" id="cartSend" type="button">Copiar pedido y abrir Instagram</button>
+    <button class="btn btn-primary" id="cartSend" type="button">Continuar al pago</button>
     <a class="btn btn-ghost" id="cartWsp" href="#" hidden>Enviar por WhatsApp</a>
-    <p class="cart-note" id="cartNote" role="status">Te respondemos por mensaje directo para coordinar pago y entrega.</p>
+    <p class="cart-note" id="cartNote" role="status">Te llevamos a los datos para transferir.</p>
   </div>
 </aside>
 
@@ -430,12 +448,13 @@
   // Datos de transferencia. Si dejas "titular" o "numero" en blanco,
   // la sección de pago simplemente no se muestra en la página.
   const TRANSFERENCIA = {
-    titular:    "",   // ej: "Michelle Cofré"
-    rut:        "",   // ej: "21.345.678-9"
-    banco:      "",   // ej: "Banco Estado"
-    tipoCuenta: "",   // ej: "Cuenta Rut"
-    numero:     "",   // ej: "21345678"
-    correo:     ""    // ej: "klean.usm@gmail.com"
+    titular:    "Diego Araya",
+    rut:        "21.658.667-0",
+    banco:      "Banco de Chile",
+    tipoCuenta: "Cuenta Vista",
+    numero:     "00-018-69252-24",
+    correo:     "diego.araya.moreno@gmail.com",
+    nota:       "Diego Araya es parte del equipo de Klean (COO)."
   };
   /* ================================================= */
 
@@ -465,6 +484,77 @@
     }
   }
 
+  /* ====== Datos para transferir ====== */
+  (function(){
+    const t = TRANSFERENCIA;
+    if (!t.titular || !t.numero) return;   // sin datos, la sección no se muestra
+
+    const filas = [
+      ["Nombre", t.titular],
+      ["RUT", t.rut],
+      ["Banco", t.banco],
+      ["Tipo de cuenta", t.tipoCuenta],
+      ["N.\u00ba de cuenta", t.numero],
+      ["Correo", t.correo]
+    ].filter(f => f[1]);
+
+    const pago = document.getElementById("pago");
+    const dl = pago.querySelector("dl");
+    dl.innerHTML = "";
+    filas.forEach(([k, v]) => {
+      const dt = document.createElement("dt"); dt.textContent = k;
+      const dd = document.createElement("dd"); dd.textContent = v;
+      dl.append(dt, dd);
+    });
+    if (t.nota){
+      const nota = document.getElementById("pagoNota");
+      nota.textContent = t.nota;
+      nota.hidden = false;
+    }
+    pago.hidden = false;
+
+    // Resumen del pedido, alimentado por el panel
+    const resumen = document.getElementById("pagoResumen");
+    const lista   = document.getElementById("pagoLista");
+    const totalEl = document.getElementById("pagoTotal");
+    const btnMonto= document.getElementById("copiarMonto");
+    let totalActual = 0;
+
+    document.addEventListener("klean:pedido", e => {
+      const items = e.detail.items, total = e.detail.total;
+      totalActual = total;
+      resumen.hidden = !items.length;
+      btnMonto.hidden = !items.length;
+      lista.innerHTML = "";
+      items.forEach(i => {
+        const li = document.createElement("li");
+        const a = document.createElement("span");
+        a.textContent = i.qty + " \u00d7 " + i.name;
+        const b = document.createElement("strong");
+        b.textContent = clp(i.price * i.qty);
+        li.append(a, b);
+        lista.appendChild(li);
+      });
+      totalEl.textContent = clp(total);
+    });
+
+    const ok = document.getElementById("copiarOk");
+    function aviso(texto){
+      ok.textContent = texto;
+      clearTimeout(aviso.t);
+      aviso.t = setTimeout(() => { ok.textContent = ""; }, 3500);
+    }
+
+    document.getElementById("copiarDatos").addEventListener("click", async () => {
+      const texto = filas.map(([k, v]) => k + ": " + v).join("\n");
+      aviso((await copiar(texto)) ? "\u00a1Datos copiados!" : "No se pudo copiar, cópialos a mano.");
+    });
+
+    btnMonto.addEventListener("click", async () => {
+      aviso((await copiar(String(totalActual))) ? "Monto copiado: " + clp(totalActual) : "No se pudo copiar el monto.");
+    });
+  })();
+
   /* ====== Pedido (carrito) ====== */
   (function(){
     const panel = document.getElementById("cart");
@@ -488,6 +578,9 @@
       try{ localStorage.setItem("klean-pedido", JSON.stringify(items)); }catch(e){}
     }
 
+    function avisarPago(){
+      document.dispatchEvent(new CustomEvent("klean:pedido", { detail: { items: items, total: totalPedido() } }));
+    }
     function totalPedido(){ return items.reduce((a,i) => a + i.price * i.qty, 0); }
     function unidades(){ return items.reduce((a,i) => a + i.qty, 0); }
 
@@ -516,9 +609,11 @@
         const li = document.createElement("li");
         li.innerHTML = '<p class="cart-empty">Todavía no agregas nada. Elige un kit en <a href="#productos">Productos</a>.</p>';
         lista.appendChild(li);
+        avisarPago();
         return;
       }
 
+      avisarPago();
       items.forEach(i => {
         const li = document.createElement("li");
         li.className = "cart-item";
@@ -602,12 +697,22 @@
     });
 
     document.getElementById("cartSend").addEventListener("click", async () => {
-      if (!items.length){ nota.textContent = "Agrega al menos un kit antes de enviar."; return; }
+      if (!items.length){ nota.textContent = "Agrega al menos un kit antes de continuar."; return; }
+      const pago = document.getElementById("pago");
+      if (pago && !pago.hidden){
+        cerrarPanel();
+        setTimeout(() => {
+          pago.scrollIntoView({ behavior: "smooth", block: "start" });
+          pago.setAttribute("tabindex", "-1");
+          pago.focus({ preventScroll: true });
+        }, 260);
+        return;
+      }
+      // Respaldo si todavía no hay datos de transferencia cargados
       const ok = await copiar(textoPedido());
       nota.textContent = ok
-        ? "Pedido copiado. Pégalo en el chat que se acaba de abrir."
-        : "No pude copiarlo solo: escríbenos el pedido en el chat.";
-      window.open("https://ig.me/m/" + IG_HANDLE, "_blank", "noopener");
+        ? "Pedido copiado. Mándanoslo por mensaje directo a @" + IG_HANDLE + "."
+        : "Escríbenos tu pedido por mensaje directo a @" + IG_HANDLE + ".";
     });
 
     if (WHATSAPP){
@@ -622,130 +727,6 @@
     pintar();
   })();
 
-  /* ====== Datos de transferencia ====== */
-  (function(){
-    const t = TRANSFERENCIA;
-    if (!t.titular || !t.numero) return;   // sin datos, la sección no se muestra
-
-    const filas = [
-      ["Nombre", t.titular],
-      ["RUT", t.rut],
-      ["Banco", t.banco],
-      ["Tipo de cuenta", t.tipoCuenta],
-      ["N.º de cuenta", t.numero],
-      ["Correo", t.correo]
-    ].filter(f => f[1]);
-
-    const pago = document.getElementById("pago");
-    const dl = pago.querySelector("dl");
-    dl.innerHTML = "";
-    filas.forEach(([k, v]) => {
-      const dt = document.createElement("dt"); dt.textContent = k;
-      const dd = document.createElement("dd"); dd.textContent = v;
-      dl.append(dt, dd);
-    });
-    pago.hidden = false;
-
-    const ok = document.getElementById("copiarOk");
-    document.getElementById("copiarDatos").addEventListener("click", async () => {
-      const texto = filas.map(([k, v]) => k + ": " + v).join("\n");
-      ok.textContent = (await copiar(texto)) ? "¡Datos copiados!" : "No se pudo copiar, cópialos a mano.";
-      setTimeout(() => { ok.textContent = ""; }, 3000);
-    });
-  })();
-
-  // Limpia-audífonos interactivo
-  (function(){
-    const stage = document.getElementById("stage");
-    const cv = document.getElementById("grime");
-    const ctx = cv.getContext("2d");
-    const bar = document.getElementById("meterBar");
-    const msg = document.getElementById("cleanMsg");
-    const btn = document.getElementById("cleanBtn");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let done = false, drawing = false, last = null, W, H, dpr;
-
-    function paintGrime(){
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const r = stage.getBoundingClientRect();
-      W = r.width; H = r.height;
-      cv.width = W * dpr; cv.height = H * dpr;
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "rgba(110,98,78,0.28)";
-      ctx.fillRect(0,0,W,H);
-      // manchas y polvo, más concentradas sobre el estuche
-      let seed = 7;
-      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-      for (let i = 0; i < 420; i++){
-        const x = W*(0.18 + rnd()*0.64), y = H*(0.2 + rnd()*0.62);
-        const s = 1 + rnd()*7;
-        ctx.fillStyle = `rgba(${80+rnd()*40|0},${70+rnd()*30|0},${55+rnd()*20|0},${0.25+rnd()*0.45})`;
-        ctx.beginPath(); ctx.arc(x,y,s,0,Math.PI*2); ctx.fill();
-      }
-      for (let i = 0; i < 14; i++){
-        const x = W*(0.25 + rnd()*0.5), y = H*(0.3 + rnd()*0.45);
-        const g = ctx.createRadialGradient(x,y,0,x,y,W*0.09);
-        g.addColorStop(0,"rgba(120,104,80,0.45)"); g.addColorStop(1,"rgba(120,104,80,0)");
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,W*0.09,0,Math.PI*2); ctx.fill();
-      }
-      ctx.globalCompositeOperation = "destination-out";
-    }
-
-    function pos(e){ const r = cv.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; }
-    function wipe(p){
-      ctx.lineWidth = W*0.12; ctx.lineCap = "round"; ctx.lineJoin = "round";
-      ctx.beginPath();
-      if (last){ ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); } else { ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+0.1,p.y); }
-      ctx.stroke(); last = p;
-    }
-    let checkT = 0;
-    function progress(){
-      const now = performance.now(); if (now - checkT < 120) return; checkT = now;
-      const data = ctx.getImageData(0,0,cv.width,cv.height).data;
-      let clear = 0, total = 0;
-      for (let i = 3; i < data.length; i += 4*32){ total++; if (data[i] < 20) clear++; }
-      const pct = clear/total;
-      bar.style.width = Math.min(100, Math.round(pct/0.6*100)) + "%";
-      if (pct > 0.6) finish();
-    }
-    function finish(){
-      if (done) return; done = true;
-      bar.style.width = "100%";
-      stage.classList.add("clean");
-      msg.textContent = "Así quedan con Klean.";
-      btn.textContent = "Ensuciar de nuevo";
-    }
-    function reset(){
-      done = false; stage.classList.remove("clean"); bar.style.width = "0";
-      msg.textContent = "Pasa el dedo o el mouse para limpiarlos.";
-      btn.textContent = "Limpiar todo"; paintGrime();
-    }
-
-    cv.addEventListener("pointerdown", e => { if (done) return; drawing = true; last = null; cv.setPointerCapture(e.pointerId); wipe(pos(e)); progress(); });
-    cv.addEventListener("pointermove", e => { if (!drawing || done) return; wipe(pos(e)); progress(); });
-    ["pointerup","pointercancel","pointerleave"].forEach(ev => cv.addEventListener(ev, () => { drawing = false; last = null; }));
-
-    btn.addEventListener("click", () => {
-      if (done){ reset(); return; }
-      if (reduce){ finish(); return; }
-      // barrido automático en zigzag
-      let t = 0; last = null;
-      const rows = 7;
-      (function step(){
-        t += 0.045;
-        const row = Math.floor(t), f = t - row;
-        if (row >= rows){ finish(); return; }
-        const x = (row % 2 === 0 ? f : 1 - f) * W;
-        const y = (row + 0.5) / rows * H;
-        wipe({x,y}); bar.style.width = Math.round(t/rows*100) + "%";
-        requestAnimationFrame(step);
-      })();
-    });
-
-    let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (!done) paintGrime(); }, 150); });
-    paintGrime();
-  })();
 </script>
 </body>
 </html>
