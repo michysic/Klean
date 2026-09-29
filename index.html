@@ -137,6 +137,51 @@
   footer p{margin:.75rem 0 0;max-width:38ch}
   footer a{color:var(--aqua)}
   .legal{margin-top:2rem;padding-top:1.25rem;border-top:1px solid #24404A;font-size:.9rem}
+
+  /* Header actions */
+  .bar-actions{display:flex;align-items:center;gap:.6rem}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .cart-count{display:grid;place-items:center;min-width:1.5rem;height:1.5rem;padding:0 .35rem;border-radius:999px;background:var(--navy);color:#F2FBFC;font-size:.85rem;line-height:1}
+  @media (max-width:520px){.ig-head{display:none}}
+
+  /* Panel de pedido */
+  .cart-back{position:fixed;inset:0;background:rgba(18,28,34,.55);z-index:40;opacity:0;transition:opacity .2s}
+  .cart-back.open{opacity:1}
+  .cart{position:fixed;top:0;right:0;height:100dvh;width:min(420px,100%);background:var(--card);border-left:1px solid var(--line);z-index:50;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease}
+  .cart.open{transform:none}
+  @media (prefers-reduced-motion: reduce){.cart,.cart-back{transition:none}}
+  .cart-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.25rem 1.25rem 1rem;border-bottom:1px solid var(--line)}
+  .cart-head h2{font-size:1.5rem;margin:0}
+  .icon-btn{background:none;border:0;font:inherit;font-size:1.7rem;line-height:1;color:var(--muted);cursor:pointer;padding:.1rem .5rem;border-radius:10px}
+  .icon-btn:hover{color:var(--text)}
+  .cart-items{list-style:none;margin:0;padding:1.25rem;overflow-y:auto;flex:1;display:grid;gap:1rem;align-content:start}
+  .cart-item{display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;padding-bottom:1rem;border-bottom:1px solid var(--line)}
+  .cart-item h3{margin:0;font-size:1.1rem}
+  .cart-item .unit{margin:0;color:var(--muted);font-size:.95rem}
+  .cart-item .line{font-weight:700;text-align:right;white-space:nowrap;align-self:end}
+  .qty{display:flex;align-items:center;gap:.5rem}
+  .qty button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:1.2rem;line-height:1;cursor:pointer}
+  .qty button:hover{border-color:var(--teal)}
+  .qty span{min-width:2ch;text-align:center;font-weight:700}
+  .cart-empty{color:var(--muted);margin:0}
+  .cart-foot{padding:1.25rem;border-top:1px solid var(--line);display:grid;gap:.75rem;background:var(--bg-alt)}
+  .cart-total{display:flex;justify-content:space-between;align-items:baseline;font-size:1.1rem}
+  .cart-total strong{font-size:1.9rem;letter-spacing:-.02em}
+  .cart-foot .btn{justify-content:center;width:100%}
+  .cart-note{margin:0;font-size:.92rem;color:var(--muted);text-align:center;min-height:1.4em}
+
+  /* Datos de transferencia */
+  .pago{margin-top:3.5rem;background:#18262E;border:1px solid #24404A;border-radius:24px;padding:1.75rem;display:grid;gap:1rem}
+  .pago h3{margin:0;font-size:1.4rem}
+  .pago .pago-intro{margin:0;color:#A9C3C8;font-size:1.05rem;max-width:56ch}
+  .pago dl{display:grid;grid-template-columns:auto 1fr;gap:.5rem 1.5rem;margin:.25rem 0 0}
+  .pago dt{color:#A9C3C8;font-size:1rem}
+  .pago dd{margin:0;font-weight:700;overflow-wrap:anywhere}
+  .pago-actions{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center}
+  .pago .btn-ghost{border-color:#F2FBFC;color:#F2FBFC}
+  .pago .btn-ghost:hover{background:#F2FBFC;color:var(--navy)}
+  .copy-ok{font-size:.95rem;color:var(--aqua)}
+  @media (max-width:520px){.pago dl{grid-template-columns:1fr;gap:.15rem}.pago dd{margin-bottom:.6rem}}
 </style>
 </head>
 <body>
@@ -151,7 +196,13 @@
         <li><a href="#por-que">Por qué Klean</a></li>
       </ul>
     </nav>
-    <a class="btn btn-primary btn-sm" data-ig href="#">Comprar por Instagram</a>
+    <div class="bar-actions">
+      <a class="btn btn-ghost btn-sm ig-head" data-ig href="#">Instagram</a>
+      <button class="btn btn-primary btn-sm" id="cartBtn" type="button" aria-haspopup="dialog" aria-controls="cart">
+        Mi pedido <span class="cart-count" id="cartCount" aria-hidden="true">0</span>
+        <span class="sr-only" id="cartCountLabel">pedido vacío</span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -215,7 +266,7 @@
   <section id="productos">
     <div class="wrap">
       <h2>Nuestros kits</h2>
-      <p class="section-intro">Tres formatos según lo que necesites limpiar. Todos se piden por Instagram y se entregan en tu campus.</p>
+      <p class="section-intro">Tres formatos según lo que necesites limpiar. Arma tu pedido acá y lo coordinamos por mensaje directo.</p>
 
       <div class="products">
         <article class="product featured">
@@ -233,7 +284,7 @@
           <div class="p-buy">
             <span class="price">$3.990</span>
             <span class="stock">En stock</span>
-            <a class="btn btn-primary btn-sm" data-ig data-product="Klean Basic" href="#">Pedir por Instagram</a>
+            <button class="btn btn-primary btn-sm" type="button" data-add data-name="Klean Basic" data-price="3990">Agregar al pedido</button>
           </div>
         </article>
 
@@ -252,7 +303,7 @@
           <div class="p-buy">
             <span class="price">$4.990</span>
             <span class="stock">En stock</span>
-            <a class="btn btn-primary btn-sm" data-ig data-product="Lápiz Limpiador" href="#">Pedir por Instagram</a>
+            <button class="btn btn-primary btn-sm" type="button" data-add data-name="Lápiz Limpiador" data-price="4990">Agregar al pedido</button>
           </div>
         </article>
 
@@ -271,7 +322,7 @@
           <div class="p-buy">
             <span class="price">$5.990</span>
             <span class="stock">En stock</span>
-            <a class="btn btn-primary btn-sm" data-ig data-product="Kit Limpiador 7 en 1" href="#">Pedir por Instagram</a>
+            <button class="btn btn-primary btn-sm" type="button" data-add data-name="Kit Limpiador 7 en 1" data-price="5990">Agregar al pedido</button>
           </div>
         </article>
         
@@ -283,13 +334,25 @@
   <section class="how" id="como-comprar">
     <div class="wrap">
       <h2>Cómo comprar</h2>
-      <p class="section-intro">Sin carrito ni registro: todo se coordina por mensaje directo.</p>
+      <p class="section-intro">Sin registro ni pagos en línea: armas tu pedido acá y lo cerramos por mensaje directo.</p>
       <ol class="steps">
-        <li><h3>Elige tu kit</h3><p>Revisa los tres formatos y quédate con el que más te sirva.</p></li>
-        <li><h3>Escríbenos</h3><p>Mándanos un mensaje a <a data-ig data-ig-text href="#">@klean.usm</a> con el kit que quieres.</p></li>
-        <li><h3>Coordina la entrega</h3><p>Acordamos el pago y el punto de entrega en tu campus.</p></li>
+        <li><h3>Arma tu pedido</h3><p>Agrega los kits que quieras con el botón “Agregar al pedido”.</p></li>
+        <li><h3>Envíanoslo</h3><p>Con un botón copiamos tu pedido y abrimos el chat de <a data-ig data-ig-text href="#">@klean.usm</a>: solo lo pegas.</p></li>
+        <li><h3>Paga y coordina</h3><p>Por transferencia o en efectivo, y acordamos el punto de entrega en tu campus.</p></li>
         <li><h3>Limpia en un minuto</h3><p>Llévalo en la mochila y úsalo cuando lo necesites.</p></li>
       </ol>
+
+      <div class="pago" id="pago" hidden>
+        <h3>Pago por transferencia</h3>
+        <p class="pago-intro">Transfiere el total de tu pedido y mándanos el comprobante por mensaje directo. También puedes pagar en efectivo al momento de la entrega.</p>
+        <dl>
+          <div hidden></div>
+        </dl>
+        <div class="pago-actions">
+          <button class="btn btn-ghost btn-sm" id="copiarDatos" type="button">Copiar datos</button>
+          <span class="copy-ok" id="copiarOk" role="status"></span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -327,6 +390,21 @@
   </section>
 </main>
 
+<div class="cart-back" id="cartBack" hidden></div>
+<aside class="cart" id="cart" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
+  <div class="cart-head">
+    <h2 id="cartTitle">Mi pedido</h2>
+    <button class="icon-btn" id="cartClose" type="button" aria-label="Cerrar el pedido">&times;</button>
+  </div>
+  <ul class="cart-items" id="cartItems"></ul>
+  <div class="cart-foot">
+    <div class="cart-total"><span>Total</span><strong id="cartTotal">$0</strong></div>
+    <button class="btn btn-primary" id="cartSend" type="button">Copiar pedido y abrir Instagram</button>
+    <a class="btn btn-ghost" id="cartWsp" href="#" hidden>Enviar por WhatsApp</a>
+    <p class="cart-note" id="cartNote" role="status">Te respondemos por mensaje directo para coordinar pago y entrega.</p>
+  </div>
+</aside>
+
 <footer>
   <div class="wrap">
     <div class="foot">
@@ -343,15 +421,237 @@
 </footer>
 
 <script>
-  /* ====== CONFIGURA AQUÍ TU INSTAGRAM ====== */
-  const IG_HANDLE = "klean.usm"; // sin @, ej: "klean.cl"
-  /* ========================================= */
+  /* ================= CONFIGURA AQUÍ ================= */
+  const IG_HANDLE = "klean.usm";   // sin @, ej: "klean.cl"
+
+  const WHATSAPP = "";             // ej: "56912345678" (sin + ni espacios). Vacío = no aparece el botón.
+
+  // Datos de transferencia. Si dejas "titular" o "numero" en blanco,
+  // la sección de pago simplemente no se muestra en la página.
+  const TRANSFERENCIA = {
+    titular:    "",   // ej: "Michelle Cofré"
+    rut:        "",   // ej: "21.345.678-9"
+    banco:      "",   // ej: "Banco Estado"
+    tipoCuenta: "",   // ej: "Cuenta Rut"
+    numero:     "",   // ej: "21345678"
+    correo:     ""    // ej: "klean.usm@gmail.com"
+  };
+  /* ================================================= */
+
+  const clp = n => "$" + n.toLocaleString("es-CL");
 
   document.querySelectorAll("[data-ig]").forEach(a => {
     a.href = "https://www.instagram.com/" + IG_HANDLE;
     a.target = "_blank"; a.rel = "noopener";
     if (a.hasAttribute("data-ig-text")) a.textContent = "@" + IG_HANDLE;
   });
+
+  // Copiar al portapapeles, con respaldo para navegadores antiguos
+  async function copiar(texto){
+    try{
+      await navigator.clipboard.writeText(texto);
+      return true;
+    }catch(e){
+      try{
+        const ta = document.createElement("textarea");
+        ta.value = texto; ta.setAttribute("readonly","");
+        ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok;
+      }catch(e2){ return false; }
+    }
+  }
+
+  /* ====== Pedido (carrito) ====== */
+  (function(){
+    const panel = document.getElementById("cart");
+    const back  = document.getElementById("cartBack");
+    const lista = document.getElementById("cartItems");
+    const total = document.getElementById("cartTotal");
+    const cuenta= document.getElementById("cartCount");
+    const label = document.getElementById("cartCountLabel");
+    const nota  = document.getElementById("cartNote");
+    const wsp   = document.getElementById("cartWsp");
+    const abrir = document.getElementById("cartBtn");
+    let items = [];
+    let ultimoFoco = null;
+
+    // Persistencia opcional: si el navegador la bloquea, el pedido igual funciona
+    try{
+      const g = localStorage.getItem("klean-pedido");
+      if (g) items = JSON.parse(g).filter(i => i && i.name && i.price > 0);
+    }catch(e){}
+    function guardar(){
+      try{ localStorage.setItem("klean-pedido", JSON.stringify(items)); }catch(e){}
+    }
+
+    function totalPedido(){ return items.reduce((a,i) => a + i.price * i.qty, 0); }
+    function unidades(){ return items.reduce((a,i) => a + i.qty, 0); }
+
+    function agregar(name, price){
+      const yaEsta = items.find(i => i.name === name);
+      if (yaEsta) yaEsta.qty++;
+      else items.push({name, price, qty:1});
+      guardar(); pintar();
+    }
+    function cambiar(name, delta){
+      const i = items.find(x => x.name === name);
+      if (!i) return;
+      i.qty += delta;
+      if (i.qty <= 0) items = items.filter(x => x.name !== name);
+      guardar(); pintar();
+    }
+
+    function pintar(){
+      const n = unidades();
+      cuenta.textContent = n;
+      label.textContent = n === 0 ? "pedido vacío" : n + (n === 1 ? " producto" : " productos");
+      total.textContent = clp(totalPedido());
+      lista.innerHTML = "";
+
+      if (!items.length){
+        const li = document.createElement("li");
+        li.innerHTML = '<p class="cart-empty">Todavía no agregas nada. Elige un kit en <a href="#productos">Productos</a>.</p>';
+        lista.appendChild(li);
+        return;
+      }
+
+      items.forEach(i => {
+        const li = document.createElement("li");
+        li.className = "cart-item";
+
+        const info = document.createElement("div");
+        const h3 = document.createElement("h3");
+        h3.textContent = i.name;
+        const unit = document.createElement("p");
+        unit.className = "unit";
+        unit.textContent = clp(i.price) + " c/u";
+        info.append(h3, unit);
+
+        const linea = document.createElement("div");
+        linea.className = "line";
+        linea.textContent = clp(i.price * i.qty);
+
+        const qty = document.createElement("div");
+        qty.className = "qty";
+        const menos = document.createElement("button");
+        menos.type = "button"; menos.textContent = "−";
+        menos.setAttribute("aria-label", "Quitar uno de " + i.name);
+        menos.addEventListener("click", () => cambiar(i.name, -1));
+        const num = document.createElement("span");
+        num.textContent = i.qty;
+        const mas = document.createElement("button");
+        mas.type = "button"; mas.textContent = "+";
+        mas.setAttribute("aria-label", "Agregar uno de " + i.name);
+        mas.addEventListener("click", () => cambiar(i.name, 1));
+        qty.append(menos, num, mas);
+
+        li.append(info, linea, qty);
+        lista.appendChild(li);
+      });
+    }
+
+    function textoPedido(){
+      const lineas = items.map(i => "• " + i.qty + " × " + i.name + " — " + clp(i.price * i.qty));
+      return "¡Hola! Quiero hacer un pedido en Klean:\n\n"
+           + lineas.join("\n")
+           + "\n\nTotal: " + clp(totalPedido());
+    }
+
+    function abrirPanel(){
+      ultimoFoco = document.activeElement;
+      back.hidden = false; panel.hidden = false;
+      requestAnimationFrame(() => { back.classList.add("open"); panel.classList.add("open"); });
+      document.body.style.overflow = "hidden";
+      document.getElementById("cartClose").focus();
+    }
+    function cerrarPanel(){
+      back.classList.remove("open"); panel.classList.remove("open");
+      document.body.style.overflow = "";
+      setTimeout(() => { back.hidden = true; panel.hidden = true; }, 250);
+      if (ultimoFoco) ultimoFoco.focus();
+      nota.textContent = "Te respondemos por mensaje directo para coordinar pago y entrega.";
+    }
+
+    document.querySelectorAll("[data-add]").forEach(b => {
+      b.addEventListener("click", () => {
+        agregar(b.dataset.name, Number(b.dataset.price));
+        const original = b.textContent;
+        b.textContent = "Agregado ✓";
+        setTimeout(() => { b.textContent = original; }, 1200);
+        abrirPanel();
+      });
+    });
+
+    abrir.addEventListener("click", abrirPanel);
+    document.getElementById("cartClose").addEventListener("click", cerrarPanel);
+    back.addEventListener("click", cerrarPanel);
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && !panel.hidden) cerrarPanel(); });
+
+    // Mantener el foco dentro del panel mientras está abierto
+    panel.addEventListener("keydown", e => {
+      if (e.key !== "Tab") return;
+      const foco = [...panel.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])')].filter(el => !el.hidden && el.offsetParent !== null);
+      if (!foco.length) return;
+      const primero = foco[0], ultimo = foco[foco.length - 1];
+      if (e.shiftKey && document.activeElement === primero){ e.preventDefault(); ultimo.focus(); }
+      else if (!e.shiftKey && document.activeElement === ultimo){ e.preventDefault(); primero.focus(); }
+    });
+
+    document.getElementById("cartSend").addEventListener("click", async () => {
+      if (!items.length){ nota.textContent = "Agrega al menos un kit antes de enviar."; return; }
+      const ok = await copiar(textoPedido());
+      nota.textContent = ok
+        ? "Pedido copiado. Pégalo en el chat que se acaba de abrir."
+        : "No pude copiarlo solo: escríbenos el pedido en el chat.";
+      window.open("https://ig.me/m/" + IG_HANDLE, "_blank", "noopener");
+    });
+
+    if (WHATSAPP){
+      wsp.hidden = false;
+      wsp.target = "_blank"; wsp.rel = "noopener";
+      wsp.addEventListener("click", e => {
+        if (!items.length){ e.preventDefault(); nota.textContent = "Agrega al menos un kit antes de enviar."; return; }
+        wsp.href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(textoPedido());
+      });
+    }
+
+    pintar();
+  })();
+
+  /* ====== Datos de transferencia ====== */
+  (function(){
+    const t = TRANSFERENCIA;
+    if (!t.titular || !t.numero) return;   // sin datos, la sección no se muestra
+
+    const filas = [
+      ["Nombre", t.titular],
+      ["RUT", t.rut],
+      ["Banco", t.banco],
+      ["Tipo de cuenta", t.tipoCuenta],
+      ["N.º de cuenta", t.numero],
+      ["Correo", t.correo]
+    ].filter(f => f[1]);
+
+    const pago = document.getElementById("pago");
+    const dl = pago.querySelector("dl");
+    dl.innerHTML = "";
+    filas.forEach(([k, v]) => {
+      const dt = document.createElement("dt"); dt.textContent = k;
+      const dd = document.createElement("dd"); dd.textContent = v;
+      dl.append(dt, dd);
+    });
+    pago.hidden = false;
+
+    const ok = document.getElementById("copiarOk");
+    document.getElementById("copiarDatos").addEventListener("click", async () => {
+      const texto = filas.map(([k, v]) => k + ": " + v).join("\n");
+      ok.textContent = (await copiar(texto)) ? "¡Datos copiados!" : "No se pudo copiar, cópialos a mano.";
+      setTimeout(() => { ok.textContent = ""; }, 3000);
+    });
+  })();
 
   // Limpia-audífonos interactivo
   (function(){
