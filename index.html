@@ -727,6 +727,99 @@
     pintar();
   })();
 
+  // Limpia-audífonos interactivo
+  (function(){
+    const stage = document.getElementById("stage");
+    const cv = document.getElementById("grime");
+    const ctx = cv.getContext("2d");
+    const bar = document.getElementById("meterBar");
+    const msg = document.getElementById("cleanMsg");
+    const btn = document.getElementById("cleanBtn");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let done = false, drawing = false, last = null, W, H, dpr;
+
+    function paintGrime(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const r = stage.getBoundingClientRect();
+      W = r.width; H = r.height;
+      cv.width = W * dpr; cv.height = H * dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "rgba(110,98,78,0.28)";
+      ctx.fillRect(0,0,W,H);
+      // manchas y polvo, más concentradas sobre el estuche
+      let seed = 7;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < 420; i++){
+        const x = W*(0.18 + rnd()*0.64), y = H*(0.2 + rnd()*0.62);
+        const s = 1 + rnd()*7;
+        ctx.fillStyle = `rgba(${80+rnd()*40|0},${70+rnd()*30|0},${55+rnd()*20|0},${0.25+rnd()*0.45})`;
+        ctx.beginPath(); ctx.arc(x,y,s,0,Math.PI*2); ctx.fill();
+      }
+      for (let i = 0; i < 14; i++){
+        const x = W*(0.25 + rnd()*0.5), y = H*(0.3 + rnd()*0.45);
+        const g = ctx.createRadialGradient(x,y,0,x,y,W*0.09);
+        g.addColorStop(0,"rgba(120,104,80,0.45)"); g.addColorStop(1,"rgba(120,104,80,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,W*0.09,0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalCompositeOperation = "destination-out";
+    }
+
+    function pos(e){ const r = cv.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; }
+    function wipe(p){
+      ctx.lineWidth = W*0.12; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.beginPath();
+      if (last){ ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); } else { ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+0.1,p.y); }
+      ctx.stroke(); last = p;
+    }
+    let checkT = 0;
+    function progress(){
+      const now = performance.now(); if (now - checkT < 120) return; checkT = now;
+      const data = ctx.getImageData(0,0,cv.width,cv.height).data;
+      let clear = 0, total = 0;
+      for (let i = 3; i < data.length; i += 4*32){ total++; if (data[i] < 20) clear++; }
+      const pct = clear/total;
+      bar.style.width = Math.min(100, Math.round(pct/0.6*100)) + "%";
+      if (pct > 0.6) finish();
+    }
+    function finish(){
+      if (done) return; done = true;
+      bar.style.width = "100%";
+      stage.classList.add("clean");
+      msg.textContent = "Así quedan con Klean.";
+      btn.textContent = "Ensuciar de nuevo";
+    }
+    function reset(){
+      done = false; stage.classList.remove("clean"); bar.style.width = "0";
+      msg.textContent = "Pasa el dedo o el mouse para limpiarlos.";
+      btn.textContent = "Limpiar todo"; paintGrime();
+    }
+
+    cv.addEventListener("pointerdown", e => { if (done) return; drawing = true; last = null; cv.setPointerCapture(e.pointerId); wipe(pos(e)); progress(); });
+    cv.addEventListener("pointermove", e => { if (!drawing || done) return; wipe(pos(e)); progress(); });
+    ["pointerup","pointercancel","pointerleave"].forEach(ev => cv.addEventListener(ev, () => { drawing = false; last = null; }));
+
+    btn.addEventListener("click", () => {
+      if (done){ reset(); return; }
+      if (reduce){ finish(); return; }
+      // barrido automático en zigzag
+      let t = 0; last = null;
+      const rows = 7;
+      (function step(){
+        t += 0.045;
+        const row = Math.floor(t), f = t - row;
+        if (row >= rows){ finish(); return; }
+        const x = (row % 2 === 0 ? f : 1 - f) * W;
+        const y = (row + 0.5) / rows * H;
+        wipe({x,y}); bar.style.width = Math.round(t/rows*100) + "%";
+        requestAnimationFrame(step);
+      })();
+    });
+
+    let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (!done) paintGrime(); }, 150); });
+    paintGrime();
+  })();
+
 </script>
 </body>
 </html>
